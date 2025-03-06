@@ -496,7 +496,7 @@ df_vector$sign[df_vector$sign>0] <- 1
 
 require(grid)
 require(ggplot2)
-# First load "functions multiple scales.R"
+# First load all functions in the code: "functions_multiple_scales.R"
 
 ggplot(df_vector, aes(y = Tb, x = Ta)) + theme_bw() + # 500x400
   theme(panel.grid = element_blank(), legend.position="none",
