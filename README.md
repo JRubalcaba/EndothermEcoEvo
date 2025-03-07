@@ -29,7 +29,8 @@ loaded via a namespace (and not attached):
 
 # Code description
 The main R code computes the energy-balance model described in the paper and generates Figures 2, 3 and 4. 
-The additional code "functions_multiple_scales.R" loads functions used for Figure 3 and 4.
+
+The additional code "functions_multiple_scales.R" loads functions required to plot Figures 3 and 4.
 
 
 
