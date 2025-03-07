@@ -37,7 +37,7 @@ theta_Tb: Energy costs of thermoregulation
 
 balance_function: Analytical solution of energy balance equation
 
-EvolDyn: Quantitative genetic simulations for the transition to homeothermy
+EvolDyn: Evolutionary dynamics simulations for the transition to homeothermy
 
 The additional code "functions_multiple_scales.R" loads functions required to plot Figures 3 and 4.
 
