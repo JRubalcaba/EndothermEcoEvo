@@ -29,7 +29,7 @@ loaded via a namespace (and not attached):
 [31] withr_3.0.0       gtable_0.3.5      broom_1.0.6  
 
 # Code description
-The main R code computes the energy-balance model described in the paper including the functions: 
+The main R code "Rcode_Rubalcaba_2024.R" computes the energy-balance model described in the paper including the functions: 
 
 phi_Tb: Temperature dependence of energy assimilation
 
