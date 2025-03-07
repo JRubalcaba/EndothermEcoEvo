@@ -20,6 +20,7 @@ ggpubr_0.6.0
 ggplot2_3.5.1    
 
 loaded via a namespace (and not attached):
+
  [1] vctrs_0.6.5       cli_3.6.3         rlang_1.1.4       stringi_1.8.4     purrr_1.0.2       car_3.1-2        
  [7] generics_0.1.3    glue_1.7.0        backports_1.5.0   colorspace_2.1-1  scales_1.3.0      fansi_1.0.6      
 [13] abind_1.4-8       carData_3.0-5     munsell_0.5.1     tibble_3.2.1      rstatix_0.7.2     lifecycle_1.0.4  
@@ -28,7 +29,12 @@ loaded via a namespace (and not attached):
 [31] withr_3.0.0       gtable_0.3.5      broom_1.0.6  
 
 # Code description
-The main R code computes the energy-balance model described in the paper and generates Figures 2, 3 and 4. 
+The main R code computes the energy-balance model described in the paper including the functions: 
+
+phi_Tb: Temperature dependence of energy assimilation
+theta_Tb: Energy costs of thermoregulation
+balance_function: Analytical solution of energy balance equation
+EvolDyn: Quantitative genetic simulations for the transition to homeothermy
 
 The additional code "functions_multiple_scales.R" loads functions required to plot Figures 3 and 4.
 
