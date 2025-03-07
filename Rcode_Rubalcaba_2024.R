@@ -126,8 +126,8 @@ balance_function <- function(t0, tmat, tfin, Tb, Ta, mu, lambda, kappa, b, v, a,
 }
 
 Tb <- seq(0, 50,length.out=100) # body temperature range
-Ta1=25
-Ta2=10
+Ta1=25 # Initial ambient temperature (warm)
+Ta2=10 # Final ambient temperature (cold)
 
 mu = 0.05
 lambda = 0.001
@@ -265,14 +265,11 @@ EvolDyn <-function(params, time){
   Tb_i[1] <- Tb0
   
   Tb <- rnorm(N[1], Tb_i[1], sqrt(vP_Tb_N[1])) # Population values for trait, with N[1] individuals...
-  
-  # Ta_mean <- seq(params$Ta_max, params$Ta_min, length.out=time)
-  # Ta_mean <- params$Ta_min + (params$Ta_max-params$Ta_min)/2 + (params$Ta_max-params$Ta_min)/2 * sin(2+0.01 * 1:time)
+
+  # Ambient temperature decline
   Ta_mean <- params$Ta_min + (params$Ta_max-params$Ta_min) * exp(0.05*(time/3 - 1:time)) / (1 + exp(0.05*(time/3 - 1:time)))
   Ta <- Ta_mean + rnorm(time, 0, params$Ta_SD)
-  
-  # plot(Ta)
-  
+
   # Run model
   for(i in 2:time){
     if(N[i-1] < NC){
@@ -292,15 +289,16 @@ EvolDyn <-function(params, time){
     f_mean[i] <- mean(out_tb[,2], na.rm=T)
     l_mean[i] <- mean(out_tb[,1], na.rm=T)
     
-    if(f_mean[i] == 0){
+    if(round(f_mean[i],3) == 0 || is.nan(f_mean[i]) || is.na(f_mean[i])){
+      S=NA
       break
     }
     
     #### Genetic variance components
-    h2 <- params$h2 # vA_Tb_N[i-1] / vP_Tb_N[i-1]
-    vA_Tb_N[i] <- vA_Tb_N[i-1] * (1-(1/(2*N[i-1]))) #loss of va due to drift https://lukejharmon.github.io/pcm/chapter3_bmintro/ 
+    h2 <- params$h2 
+    vA_Tb_N[i] <- vA_Tb_N[i-1] * (1-(1/(2*N[i-1]))) 
     vE_Tb <- vP_Tb_N[i-1] - vA_Tb_N[i]
-    vM_Tb <- vmut * vE_Tb #vA_Tb_N[i]# mutational variance ~1e-3 1e-2 VE, Johnson and Barton 2005 Philos trans
+    vM_Tb <- vmut * vE_Tb 
     
     vP_Tb_N[i] <- vA_Tb_N[i] + vE_Tb + vM_Tb  
     
@@ -330,7 +328,7 @@ EvolDyn <-function(params, time){
   return(out[-1,])
 } 
 
-kappa <- 0.005 # 0.005, 0.03; branching: 0.0183 (SD=1, vP_Tb=4)
+kappa <- 0.0183
 params <- list(Ta_max=25, Ta_min=10, Ta_SD=2,
                mu=0.05, lambda=0.001, kappa=kappa, v=0.9, b=2/3, tmat=365/2, tfin=365*1,
                Tb=37, vP_Tb=4, h2=0.5,                                    
@@ -380,7 +378,6 @@ p3A <- ggplot() + theme_classic() + ylab("Temperature") + xlab("time") + ylim(20
         axis.ticks.x = element_blank(),
         axis.text.y = element_text(size=12, colour="black")) +
   geom_line(df_fig3, mapping=aes(y=Tb, x=time, group=simul), size=1, col="black") 
-  # geom_line(df_fig3, mapping=aes(y=Ta, x=time), size=1, col="#4393C3") 
 
 p3B <- ggplot() + theme_classic() + ylab("Thermoregulatory costs") + xlab("time") + ylim(-0.001, 0.5) +
   theme(axis.title = element_text(size=14), 
@@ -391,12 +388,9 @@ p3B <- ggplot() + theme_classic() + ylab("Thermoregulatory costs") + xlab("time"
 
 ######## Fig. 3 ----
 
-ggarrange(p3A, p3B, ncol=1, nrow=2) #600x400
+ggarrange(p3A, p3B, ncol=1, nrow=2) 
 
 ##### Temperature fluctuations, heterotermy vs homeothermy
-
-# FIRST set gamma = 0.2 in the theta function
-
 Ta_warm <- 25
 Ta_cold <- 10
 SD <- 1
@@ -454,7 +448,7 @@ size = 0.05 # vector size
 Tb_seq <- seq(20, 42, length.out=n_vectors)
 Ta_seq <- seq(7, 30, length.out=n_vectors)
 
-kappa <- 0.03 # 0.0215 (branching) 
+kappa <- 0.0215
 params <- list(Ta_max=25, Ta_min=10, Ta_SD=1,
                mu=0.05, lambda=0.001, kappa=kappa, v=0.9, b=2/3, tmat=365/2, tfin=365*1,
                Tb=37, vP_Tb=4, h2=0.5,
@@ -473,17 +467,8 @@ for(i in 1:n_vectors){
                               b=params$b, v=params$v, a=1, beta=1, c=1)
       out_tb[k,] <- out[params$tfin,]
     }
-    dW_dTb[i,j] <- cov(out_tb[,2],Tb_diff)#/mean(out_tb[,2])
+    dW_dTb[i,j] <- cov(out_tb[,2],Tb_diff)
     
-    # Ta_diff <- seq(Ta-0.1, Ta+0.1, length.out=20)
-    # out_ta <- array(NA, dim=c(20, 3))
-    # for(k in 1:20){
-    #   out <- balance_function(t0=0, tmat=params$tmat, tfin=params$tfin, Tb=Tb, 
-    #                           Ta=Ta_diff[k], mu=params$mu, lambda=params$lambda, kappa=params$kappa, 
-    #                           b=params$b, v=params$v, a=1, beta=1, c=1)
-    #   out_ta[k,] <- out[tfin,]
-    # }
-    # dW_dTa[i,j] <- cov(out_ta[,2],Tb_diff)/mean(out_ta[,2])
   }
 }
 
@@ -496,6 +481,7 @@ df_vector$sign[df_vector$sign>0] <- 1
 
 require(grid)
 require(ggplot2)
+
 # First load all functions in the code: "functions_multiple_scales.R"
 
 ggplot(df_vector, aes(y = Tb, x = Ta)) + theme_bw() + # 500x400
@@ -515,7 +501,7 @@ ggplot(df_vector, aes(y = Tb, x = Ta)) + theme_bw() + # 500x400
 
 ###### Body size dynamics
 
-kappa <- 0.03 # branching: 0.0189
+kappa <- 0.0189
 
 Ta <- seq(25, 10, length.out=200)
 Ethermo_simul <- Tb_simul <- l_simul <- numeric(length(Ta))
