@@ -32,8 +32,11 @@ loaded via a namespace (and not attached):
 The main R code computes the energy-balance model described in the paper including the functions: 
 
 phi_Tb: Temperature dependence of energy assimilation
+
 theta_Tb: Energy costs of thermoregulation
+
 balance_function: Analytical solution of energy balance equation
+
 EvolDyn: Quantitative genetic simulations for the transition to homeothermy
 
 The additional code "functions_multiple_scales.R" loads functions required to plot Figures 3 and 4.
